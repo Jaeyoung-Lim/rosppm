@@ -6,29 +6,23 @@
   
   Jaeyoung Lim
 */
+#include <ros.h>
+#include <std_msgs/String.h>
+#include <std_msgs/Empty.h>
+#include <std_msgs/Float32MultiArray.h>
 
 //Timer Initialization
 #define timer_correction_factor 1.00                        //timer correction factor. This is needed if your arduino is too fast or slow, like mine. :(
 #define timer_framelength 22000 * timer_correction_factor   //Maximum framelength in counter ticks
 #define timer_pause 300 * timer_correction_factor           //Pause between pluses in counter ticks
 // Pin Definitions
-#define led_PIN  7 //LED Status LED
-#define armsw_PIN 5 // Arm switch pin
-#define mode_PIN 4 //Trim enable switch
 #define ppmout_PIN 10 // PPM output
 
 //Mode ID
-#define mode_trim 0
-#define mode_serial 1
+//#define mode_trim 0
+//#define mode_serial 1
 int mode=0;
-
-//String Variable initialization
-boolean stringComplete = false;  // whether the string is complete
-char cmd_Char[26]="";
-int inputString[4][26];         // a string to hold incoming data
-int cmd_val[4];
-int trim_val[4];
-int inChar=0;
+float cmd_val[];
 
 //Timer variables
 int timer_accumulator = 0;         //accumulator. Used to calculate the frame padding
@@ -37,40 +31,29 @@ int pulses[8];
 int number_of_outputs =8;
 
 int count=0;
-int arm_stat =0;
 
-/*
- * rosserial PubSub Example
- * Prints "hello world!" and toggles led
- */
+void cmd_Callback(const std_msgs::Float32MultiArray& cmd_msg){
+  cmd_val[0]=cmd_msg.data[0];
+  cmd_val[1]=cmd_msg.data[1];
+  cmd_val[2]=cmd_msg.data[2];
+  cmd_val[3]=cmd_msg.data[3];
+}
 
-#include <ros.h>
-#include <std_msgs/String.h>
-#include <std_msgs/Empty.h>
 
 ros::NodeHandle  nh;
-
-ros::Subscriber<std_msgs::Empty> sub("toggle_led", messageCb );
-
-std_msgs::String str_msg;
-ros::Publisher chatter("chatter", &str_msg);
+ros::Subscriber<std_msgs::Float32MultiArray> sub("/rosppm/cmd_Ch", cmd_Callback);
+ros::Publisher chatter("/rosppm/read_Ch", &str_msg);
 
 void setup()
 {
-  nh.initNode();
+s  nh.initNode();
   nh.advertise(chatter);
   nh.subscribe(sub);
   
-  
   //Set Pinmodes
   pinMode(ppmout_PIN, OUTPUT);
-  pinMode(armsw_PIN, INPUT);
-  pinMode(led_PIN, OUTPUT);
   pinMode(13, OUTPUT);
   //Serial.begin(115200); // Initialize Serial
-  
-  init_buffer(); //Initialize buffer
-  
                       // Setup Timer
   TCCR1A = B00110001; // Compare register B used in mode '3'
   TCCR1B = B00010010; // WGM13 and CS11 set to 1
@@ -82,33 +65,14 @@ void setup()
   
 }
 
-void loop()
-{
-  str_msg.data = hello;
-  
-  
-  sw_read(); // Read mode switch / arm switches
-  serial_Event(); //Read String to buffer
-  
-   if(mode==mode_trim){ //Enter Trim Mode
-    sw_readTrim();
-    }
-  else {// Serial Mode
-    if (stringComplete) {//Execute if serial is received
-    serial_Decode(); //Decode and copy the packet
-    }
-  }
-  
+void loop(){
+
+  //chatter.publish( &str_msg );
   ppm_command(mode); //Set pulse values for PPM signal
-  ppm_minmax(); //Constrain pulse values to the minimum and maximum
-  sw_led();
-  
   timer_loopcount(); //Counter for handshake
-   
-  chatter.publish( &str_msg );
+  
   nh.spinOnce();
   
   delay(18);
-  
-  
+   
 }
