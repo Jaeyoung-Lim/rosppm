@@ -1,0 +1,10 @@
+<launch>
+
+<node name = "usb2ppm_node" pkg = "rosserial" type = "rosserial"/>
+
+
+<node />
+
+
+
+<launch/>
