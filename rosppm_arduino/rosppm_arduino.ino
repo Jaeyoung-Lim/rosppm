@@ -17,19 +17,15 @@
 #define timer_pause 300 * timer_correction_factor           //Pause between pluses in counter ticks
 // Pin Definitions
 #define ppmout_PIN 10 // PPM output
-
-//Mode ID
-//#define mode_trim 0
-//#define mode_serial 1
-int mode=0;
-float cmd_val[];
+#define num_Outputs =8;
 
 //Timer variables
 int timer_accumulator = 0;         //accumulator. Used to calculate the frame padding
 int timer_ptr = 0;                 //timer array pointer
-int pulses[8];
-int number_of_outputs =8;
+int pulses[num_Outputs];
+float cmd_val[num_Outputs];
 
+int mode=0;
 int count=0;
 
 void cmd_Callback(const std_msgs::Float32MultiArray& cmd_msg){
@@ -41,6 +37,7 @@ void cmd_Callback(const std_msgs::Float32MultiArray& cmd_msg){
 
 
 ros::NodeHandle  nh;
+
 ros::Subscriber<std_msgs::Float32MultiArray> sub("/rosppm/cmd_Ch", cmd_Callback);
 ros::Publisher chatter("/rosppm/read_Ch", &str_msg);
 
