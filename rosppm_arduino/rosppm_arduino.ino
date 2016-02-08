@@ -17,15 +17,14 @@
 #define timer_pause 300 * timer_correction_factor           //Pause between pluses in counter ticks
 // Pin Definitions
 #define ppmout_PIN 10 // PPM output
-#define num_Outputs =8;
+#define number_of_outputs 8
 
 //Timer variables
 int timer_accumulator = 0;         //accumulator. Used to calculate the frame padding
 int timer_ptr = 0;                 //timer array pointer
-int pulses[num_Outputs];
-float cmd_val[num_Outputs];
+int pulses[number_of_outputs];
+float cmd_val[number_of_outputs];
 
-int mode=0;
 int count=0;
 
 void cmd_Callback(const std_msgs::Float32MultiArray& cmd_msg){
@@ -36,14 +35,14 @@ void cmd_Callback(const std_msgs::Float32MultiArray& cmd_msg){
 }
 
 
-ros::NodeHandle  nh;
-
+ros::NodeHandle nh;
+std_msgs::Float32MultiArray stat_msg;
 ros::Subscriber<std_msgs::Float32MultiArray> sub("/rosppm/cmd_Ch", cmd_Callback);
-ros::Publisher chatter("/rosppm/read_Ch", &str_msg);
+ros::Publisher chatter("/rosppm/read_Ch", &stat_msg);
 
 void setup()
 {
-s  nh.initNode();
+  nh.initNode();
   nh.advertise(chatter);
   nh.subscribe(sub);
   
@@ -64,12 +63,17 @@ s  nh.initNode();
 
 void loop(){
 
-  //chatter.publish( &str_msg );
-  ppm_command(mode); //Set pulse values for PPM signal
+  ppm_command(); //Set pulse values for PPM signal
   timer_loopcount(); //Counter for handshake
   
+  stat_msg.data[0] = cmd_val[0];
+  stat_msg.data[1] = cmd_val[1];
+  stat_msg.data[2] = cmd_val[2];
+  stat_msg.data[3] = cmd_val[3];
+  
+  chatter.publish(&stat_msg);
   nh.spinOnce();
   
-  delay(18);
+  delay(10);
    
 }

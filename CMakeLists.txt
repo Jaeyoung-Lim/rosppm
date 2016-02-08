@@ -118,9 +118,9 @@ include_directories(
 )
 
 ## Declare a C++ library
-add_executable(rosppm_arm src/rosppm_arm.cpp)
+add_executable(rosppm_node src/rosppm_node.cpp)
 target_link_libraries(rosppm_arm ${catkin_LIBRARIES})
-add_dependencies(rosppm_arm rosppm_generate_messages_cpp)
+add_dependencies(rosppm_node rosppm_generate_messages_cpp)
 # add_library(rosppm
 #   src/${PROJECT_NAME}/rosppm.cpp
 # )
