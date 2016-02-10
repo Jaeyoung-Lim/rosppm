@@ -9,8 +9,8 @@
 #include <ros.h>
 #include <std_msgs/String.h>
 #include <std_msgs/Empty.h>
-#include <std_msgs/Float32MultiArray.h>
-
+#include <std_msgs/Float32.h>
+#include "sensor_msgs/Joy.h"
 //Timer Initialization
 #define timer_correction_factor 1.00                        //timer correction factor. This is needed if your arduino is too fast or slow, like mine. :(
 #define timer_framelength 22000 * timer_correction_factor   //Maximum framelength in counter ticks
@@ -27,24 +27,50 @@ float cmd_val[number_of_outputs];
 
 int count=0;
 
-void cmd_Callback(const std_msgs::Float32MultiArray& cmd_msg){
-  cmd_val[0]=cmd_msg.data[0];
-  cmd_val[1]=cmd_msg.data[1];
-  cmd_val[2]=cmd_msg.data[2];
-  cmd_val[3]=cmd_msg.data[3];
+void set_ch1_Callback(const std_msgs::Float32& msg){
+  cmd_val[0]=msg.data;
+}
+void set_ch2_Callback(const std_msgs::Float32& msg){
+  cmd_val[1]=msg.data;
+}
+void set_ch3_Callback(const std_msgs::Float32& msg){
+  cmd_val[2]=msg.data;
+}
+void set_ch4_Callback(const std_msgs::Float32& msg){
+  cmd_val[3]=msg.data;
 }
 
 
 ros::NodeHandle nh;
-std_msgs::Float32MultiArray stat_msg;
-ros::Subscriber<std_msgs::Float32MultiArray> sub("/rosppm/cmd_Ch", cmd_Callback);
-ros::Publisher chatter("/rosppm/read_Ch", &stat_msg);
+std_msgs::Float32 raw_read_ch1;
+std_msgs::Float32 raw_read_ch2;
+std_msgs::Float32 raw_read_ch3;
+std_msgs::Float32 raw_read_ch4;
+
+std_msgs::Float32 stat_msg;
+
+ros::Subscriber<std_msgs::Float32> sub_set_ch1("/rosppm/raw_set_Ch1", set_ch1_Callback);
+ros::Subscriber<std_msgs::Float32> sub_set_ch2("/rosppm/raw_set_Ch2", set_ch2_Callback);
+ros::Subscriber<std_msgs::Float32> sub_set_ch3("/rosppm/raw_set_Ch3", set_ch3_Callback);
+ros::Subscriber<std_msgs::Float32> sub_set_ch4("/rosppm/raw_set_Ch4", set_ch4_Callback);
+
+ros::Publisher pub_read_ch1("/rosppm/raw_read_Ch1", &raw_read_ch1);
+ros::Publisher pub_read_ch2("/rosppm/raw_read_Ch2", &raw_read_ch2);
+ros::Publisher pub_read_ch3("/rosppm/raw_read_Ch3", &raw_read_ch3);
+ros::Publisher pub_read_ch4("/rosppm/raw_read_Ch4", &raw_read_ch4);
+
 
 void setup()
 {
   nh.initNode();
-  nh.advertise(chatter);
-  nh.subscribe(sub);
+  nh.advertise(pub_read_ch1);
+  nh.advertise(pub_read_ch2);
+  nh.advertise(pub_read_ch3);
+  nh.advertise(pub_read_ch4);
+  nh.subscribe(sub_set_ch1);
+  nh.subscribe(sub_set_ch2);
+  nh.subscribe(sub_set_ch3);
+  nh.subscribe(sub_set_ch4);
   
   //Set Pinmodes
   pinMode(ppmout_PIN, OUTPUT);
@@ -63,15 +89,14 @@ void setup()
 
 void loop(){
 
-  ppm_command(); //Set pulse values for PPM signal
+  set_ppm(); //Set pulse values for PPM signal
   timer_loopcount(); //Counter for handshake
   
-  stat_msg.data[0] = cmd_val[0];
-  stat_msg.data[1] = cmd_val[1];
-  stat_msg.data[2] = cmd_val[2];
-  stat_msg.data[3] = cmd_val[3];
+  pub_read_ch1.publish(&raw_read_ch1);
+  pub_read_ch2.publish(&raw_read_ch1);
+  pub_read_ch3.publish(&raw_read_ch1);
+  pub_read_ch4.publish(&raw_read_ch1);
   
-  chatter.publish(&stat_msg);
   nh.spinOnce();
   
   delay(10);

@@ -1,8 +1,8 @@
-void ppm_command(){
+void set_ppm(){
     //Channel 1 to Channel 4 receives command values for control
-    pulses[0] = map(cmd_val[0], 0, 1023, 650, 1700); // Copy Pulse values
-    pulses[1] = map(cmd_val[1], 0, 1023, 650, 1700); //Map Pulse values
-    pulses[2] = map(cmd_val[2], 0, 1023, 650, 1700); // Copy Pulse values
-    pulses[3] = map(cmd_val[3], 0, 1023, 650, 1700); // Copy Pulse values
+    //minimum 650 max 1700
+    for(int i=0; i<number_of_outputs; i++){
+    pulses[0] = (int) cmd_val[0]*512.0+1175.0;
+    }
     
 }
