@@ -5,6 +5,9 @@
 	<param name = "baud" value = "57600" />
 </node>
 
+<node pkg="rosppm" type="rosppm_node" name="rosppm">
+
+</node>
 
 
 </launch>
