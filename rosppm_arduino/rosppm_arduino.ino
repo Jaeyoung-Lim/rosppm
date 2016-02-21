@@ -7,57 +7,55 @@
   Jaeyoung Lim
 */
 #include <ros.h>
+#inlcude "rosppm_arduino.h"
+
 #include <std_msgs/String.h>
 #include <std_msgs/Empty.h>
 #include <std_msgs/Float32.h>
 #include "sensor_msgs/Joy.h"
+
+
 //Timer Initialization
 #define timer_correction_factor 1.00                        //timer correction factor. This is needed if your arduino is too fast or slow, like mine. :(
 #define timer_framelength 22000 * timer_correction_factor   //Maximum framelength in counter ticks
 #define timer_pause 300 * timer_correction_factor           //Pause between pluses in counter ticks
 // Pin Definitions
 #define ppmout_PIN 10 // PPM output
-#define number_of_outputs 8
+#define ppmin_PIN 5 //PPM input
+#define number_of_outputs 8 //Number of Outputs
 
 //Timer variables
 int timer_accumulator = 0;         //accumulator. Used to calculate the frame padding
 int timer_ptr = 0;                 //timer array pointer
+
 int pulses[number_of_outputs];
+int in_pulses[number_of_outputs];
+int buff_pulses[number_of_outputs];
+
 float cmd_val[number_of_outputs];
+float read_val[number_of_outputs];
+float read_fval[number_of_outputs];
 
-int count=0;
+int count=0;//loopcount
 
+
+//ROS subscriber Callbacks
 void set_ch1_Callback(const std_msgs::Float32& msg){
   cmd_val[0]=msg.data;
 }
+
 void set_ch2_Callback(const std_msgs::Float32& msg){
   cmd_val[1]=msg.data;
 }
+
 void set_ch3_Callback(const std_msgs::Float32& msg){
   cmd_val[2]=msg.data;
 }
+
 void set_ch4_Callback(const std_msgs::Float32& msg){
   cmd_val[3]=msg.data;
 }
 
-
-ros::NodeHandle nh;
-std_msgs::Float32 raw_read_ch1;
-std_msgs::Float32 raw_read_ch2;
-std_msgs::Float32 raw_read_ch3;
-std_msgs::Float32 raw_read_ch4;
-
-std_msgs::Float32 stat_msg;
-
-ros::Subscriber<std_msgs::Float32> sub_set_ch1("/rosppm/raw_set_Ch1", set_ch1_Callback);
-ros::Subscriber<std_msgs::Float32> sub_set_ch2("/rosppm/raw_set_Ch2", set_ch2_Callback);
-ros::Subscriber<std_msgs::Float32> sub_set_ch3("/rosppm/raw_set_Ch3", set_ch3_Callback);
-ros::Subscriber<std_msgs::Float32> sub_set_ch4("/rosppm/raw_set_Ch4", set_ch4_Callback);
-
-ros::Publisher pub_read_ch1("/rosppm/raw_read_Ch1", &raw_read_ch1);
-ros::Publisher pub_read_ch2("/rosppm/raw_read_Ch2", &raw_read_ch2);
-ros::Publisher pub_read_ch3("/rosppm/raw_read_Ch3", &raw_read_ch3);
-ros::Publisher pub_read_ch4("/rosppm/raw_read_Ch4", &raw_read_ch4);
 
 
 void setup()
@@ -74,7 +72,9 @@ void setup()
   
   //Set Pinmodes
   pinMode(ppmout_PIN, OUTPUT);
-  pinMode(13, OUTPUT);
+  pinMode(ppmin_PIN, INPUT);
+  pinMode(13, OUTPUT); //status LED
+  
   //Serial.begin(115200); // Initialize Serial
                       // Setup Timer
   TCCR1A = B00110001; // Compare register B used in mode '3'
@@ -90,8 +90,11 @@ void setup()
 void loop(){
 
   set_ppm(); //Set pulse values for PPM signal
-  timer_loopcount(); //Counter for handshake
   
+  timer_loopcount(); //Counter for handshake
+  raw_read_ch1.data =  
+  
+  //Publish read ppm values
   pub_read_ch1.publish(&raw_read_ch1);
   pub_read_ch2.publish(&raw_read_ch1);
   pub_read_ch3.publish(&raw_read_ch1);
