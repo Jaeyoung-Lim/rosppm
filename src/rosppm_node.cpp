@@ -57,19 +57,19 @@ int main(int argc, char **argv)
    ros::NodeHandle n;
    
    //rosppm interface using Joy message
-   ros::Publisher pub_read_channels = n.advertise<sensor_msgs::Joy>("/ppm/read_channels",loopRate);
-   ros::Subscriber sub_set_channels = n.subscribe<sensor_msgs::Joy>("/ppm/set_channels", loopRate, set_channels_Callback);
+   ros::Publisher pub_read_channels = n.advertise<sensor_msgs::Joy>("/rosppm/read_channels",loopRate);
+   ros::Subscriber sub_set_channels = n.subscribe<sensor_msgs::Joy>("/rosppm/set_channels", loopRate, set_channels_Callback);
    
    //Raw message for rosppm raw message
-   ros::Publisher pub_raw_set_ch1 =n.advertise<std_msgs::Float32>("/rosppm/raw_set_ch1", loopRate);
-   ros::Publisher pub_raw_set_ch2 =n.advertise<std_msgs::Float32>("/rosppm/raw_set_ch2", loopRate);
-   ros::Publisher pub_raw_set_ch3 =n.advertise<std_msgs::Float32>("/rosppm/raw_set_ch3", loopRate);
-   ros::Publisher pub_raw_set_ch4 =n.advertise<std_msgs::Float32>("/rosppm/raw_set_ch4", loopRate);
+   ros::Publisher pub_raw_read_ch1 =n.advertise<std_msgs::Float32>("/rosppm/raw_read_ch1", loopRate);
+   ros::Publisher pub_raw_read_ch2 =n.advertise<std_msgs::Float32>("/rosppm/raw_read_ch2", loopRate);
+   ros::Publisher pub_raw_read_ch3 =n.advertise<std_msgs::Float32>("/rosppm/raw_read_ch3", loopRate);
+   ros::Publisher pub_raw_read_ch4 =n.advertise<std_msgs::Float32>("/rosppm/raw_read_ch4", loopRate);
 
-   ros::Subscriber sub_raw_read_ch1 =n.subscribe<std_msgs::Float32>("/rosppm/raw_read_ch1", loopRate, raw_read_ch1_Callback);
-   ros::Subscriber sub_raw_read_ch2 =n.subscribe<std_msgs::Float32>("/rosppm/raw_read_ch2", loopRate, raw_read_ch2_Callback);
-   ros::Subscriber sub_raw_read_ch3 =n.subscribe<std_msgs::Float32>("/rosppm/raw_read_ch3", loopRate, raw_read_ch3_Callback);
-   ros::Subscriber sub_raw_read_ch4 =n.subscribe<std_msgs::Float32>("/rosppm/raw_read_ch4", loopRate, raw_read_ch4_Callback);
+   ros::Subscriber sub_raw_cmd_ch1 =n.subscribe<std_msgs::Float32>("/rosppm/raw_cmd_ch1", loopRate, raw_read_ch1_Callback);
+   ros::Subscriber sub_raw_cmd_ch2 =n.subscribe<std_msgs::Float32>("/rosppm/raw_cmd_ch2", loopRate, raw_read_ch2_Callback);
+   ros::Subscriber sub_raw_cmd_ch3 =n.subscribe<std_msgs::Float32>("/rosppm/raw_cmd_ch3", loopRate, raw_read_ch3_Callback);
+   ros::Subscriber sub_raw_cmd_ch4 =n.subscribe<std_msgs::Float32>("/rosppm/raw_cmd_ch4", loopRate, raw_read_ch4_Callback);
    
    ros::Rate loop_rate(loopRate);
    ros::spinOnce();
@@ -96,9 +96,6 @@ int main(int argc, char **argv)
 	   }
 	   
     //Encode set channels to raw messages
-	   
-	   
-	  
 	   raw_set_ch1.data = raw_set_axes[0];
 	   raw_set_ch2.data = raw_set_axes[1];
 	   raw_set_ch3.data = raw_set_axes[2];

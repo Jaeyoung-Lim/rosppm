@@ -6,7 +6,6 @@
 </node>
 
 <node pkg="rosppm" type="rosppm_node" name="rosppm">
-
 </node>
 
 
