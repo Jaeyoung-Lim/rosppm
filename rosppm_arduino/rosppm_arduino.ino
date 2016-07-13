@@ -12,7 +12,7 @@
 #include <std_msgs/String.h>
 #include <std_msgs/Empty.h>
 #include <std_msgs/Float32.h>
-#include "sensor_msgs/Joy.h"
+#include <rosppm/ppm_io.h>
 
 //Timer Initialization
 #define timer_correction_factor 1.00                        //timer correction factor. This is needed if your arduino is too fast or slow, like mine. :(
@@ -43,53 +43,42 @@ int count=0;//loopcount
 int mode[1];
 
 //ROS subscriber Callbacks
-void set_ch1_Callback(const std_msgs::Float32& msg){
-  cmd_val[0]=msg.data;
-}
-
-void set_ch2_Callback(const std_msgs::Float32& msg){
-  cmd_val[1]=msg.data;
-}
-
-void set_ch3_Callback(const std_msgs::Float32& msg){
-  cmd_val[2]=msg.data;
-}
-
-void set_ch4_Callback(const std_msgs::Float32& msg){
-  cmd_val[3]=msg.data;
+void set_ppm_Callback(const rosppm::ppm_io& msg){
+  /*
+  cmd_val[0]=msg.a;
+  cmd_val[1]=msg.b;
+  cmd_val[2]=msg.c;
+  cmd_val[3]=msg.d;
+  cmd_val[4]=msg.e;
+  cmd_val[5]=msg.f;
+  cmd_val[6]=msg.h;
+  cmd_val[7]=msg.i;
+  */
+  cmd_val[0]=1.0;
+  cmd_val[1]=1.0;
+  cmd_val[2]=0.0;
+  cmd_val[3]=1.0;
+  cmd_val[4]=1.0;
+  cmd_val[5]=1.0;
+  cmd_val[6]=1.0;
+  cmd_val[7]=1.0;
 }
 
 ros::NodeHandle nh;
 
-std_msgs::Float32 raw_read_ch1;
-std_msgs::Float32 raw_read_ch2;
-std_msgs::Float32 raw_read_ch3;
-std_msgs::Float32 raw_read_ch4;
+rosppm::ppm_io msg_read_ppm;
 std_msgs::Float32 stat_msg;
 
-ros::Subscriber<std_msgs::Float32> sub_set_ch1("/rosppm/raw_set_Ch1", set_ch1_Callback);
-ros::Subscriber<std_msgs::Float32> sub_set_ch2("/rosppm/raw_set_Ch2", set_ch2_Callback);
-ros::Subscriber<std_msgs::Float32> sub_set_ch3("/rosppm/raw_set_Ch3", set_ch3_Callback);
-ros::Subscriber<std_msgs::Float32> sub_set_ch4("/rosppm/raw_set_Ch4", set_ch4_Callback);
-
-ros::Publisher pub_read_ch1("/rosppm/raw_read_Ch1", &raw_read_ch1);
-ros::Publisher pub_read_ch2("/rosppm/raw_read_Ch2", &raw_read_ch2);
-ros::Publisher pub_read_ch3("/rosppm/raw_read_Ch3", &raw_read_ch3);
-ros::Publisher pub_read_ch4("/rosppm/raw_read_Ch4", &raw_read_ch4);
+ros::Subscriber<rosppm::ppm_io> sub_set_ppm("/rosppm_arduino/set_ppm", set_ppm_Callback);
+ros::Publisher pub_read_ppm("/rosppm_arduino/read_ppm", &msg_read_ppm);
   
 void setup()
 {
   // ROS Configurations
   /// Initialize topics
   nh.initNode();
-  nh.advertise(pub_read_ch1);
-  nh.advertise(pub_read_ch2);
-  nh.advertise(pub_read_ch3);
-  nh.advertise(pub_read_ch4);
-  nh.subscribe(sub_set_ch1);
-  nh.subscribe(sub_set_ch2);
-  nh.subscribe(sub_set_ch3);
-  nh.subscribe(sub_set_ch4);
+  nh.advertise(pub_read_ppm);
+  nh.subscribe(sub_set_ppm);
   
   while(!nh.connected()){    nh.spinOnce();  }
   /// Get parameters
@@ -117,22 +106,21 @@ void setup()
 
 void loop(){
   
-  if(mode[0] == mode_ppmout){
-    set_ppm(); //Set pulse values for PPM signal
-  }
-  else{
-    read_ppm();  
-  }
-    
+  set_ppm(); //Set pulse values for PPM signal
+  read_ppm();
+  
+  //Encode Read ppm values
+  msg_read_ppm.a = read_val[1];
+  msg_read_ppm.b = read_val[2];
+  msg_read_ppm.c = read_val[3];
+  msg_read_ppm.d = read_val[4];
+  msg_read_ppm.e = read_val[5];
+  msg_read_ppm.f = read_val[6];
   
   //Publish read ppm values
-  pub_read_ch1.publish(&raw_read_ch1);
-  pub_read_ch2.publish(&raw_read_ch1);
-  pub_read_ch3.publish(&raw_read_ch1);
-  pub_read_ch4.publish(&raw_read_ch1);
+  pub_read_ppm.publish(&msg_read_ppm);
   
   timer_loopcount(); //Counter for handshake
-  
   nh.spinOnce();
   
   delay(10);
