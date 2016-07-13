@@ -44,7 +44,7 @@ rostopic echo /rosppm/channels
 ### Installing Dependencies
 - rosserial
 
-To run usb2ppm_ros package rosserial is used to allow the mcu to communicate with roscore
+To run rosppm package rosserial is used to allow the mcu to communicate with roscore
 ```
 sudo apt-get install ros-{ROS-DISTRO}-rosserial-arduino
 sudo apt-get install ros-{ROS-DISTRO}-rosserial
@@ -52,7 +52,7 @@ sudo apt-get install ros-{ROS-DISTRO}-rosserial
 Tutorial for rosserial can be found in the [rosserial wiki](http://wiki.ros.org/rosserial_arduino/Tutorials/Arduino%20IDE%20Setup)
 
 ### Installing rosppm
-Install usb2ppm_ros package by placing the code in the source folder in catkin_ws
+Install rosppm package by placing the code in the source folder in catkin_ws
 
 ```
 mkdir -p ~/catkin_ws/src
