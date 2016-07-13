@@ -122,9 +122,10 @@ include_directories(
 add_executable(rosppm_node src/rosppm_node.cpp)
 target_link_libraries(rosppm_node ${catkin_LIBRARIES})
 add_dependencies(rosppm_node rosppm_generate_messages_cpp)
-# add_library(rosppm
-#   src/${PROJECT_NAME}/rosppm.cpp
-# )
+
+#add_library(rosppm
+#  src/${PROJECT_NAME}/rosppm_node.cpp
+#   )
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
