@@ -10,7 +10,7 @@ rosppm is a ROS package which enables ROS to interface with an mcu that generate
 ## Hardware
 Currently tested transmitters follow as below, but in principle will be compatible with most ppm compatible transmitters when followed proper wiring.
 
-Connection diagram follows the image below
+More instructions are presented in the following [link](https://404warehouse.net/2016/07/13/rosppm-ros-package-for-accessing-rc-transmitters/)
 
 ## Running the code
 
