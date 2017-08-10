@@ -44,7 +44,7 @@ int mode[1];
 
 //ROS subscriber Callbacks
 void set_ppm_Callback(const rosppm::ppm_io& msg){
-  /*
+  
   cmd_val[0]=msg.a;
   cmd_val[1]=msg.b;
   cmd_val[2]=msg.c;
@@ -53,15 +53,7 @@ void set_ppm_Callback(const rosppm::ppm_io& msg){
   cmd_val[5]=msg.f;
   cmd_val[6]=msg.h;
   cmd_val[7]=msg.i;
-  */
-  cmd_val[0]=1.0;
-  cmd_val[1]=1.0;
-  cmd_val[2]=0.0;
-  cmd_val[3]=1.0;
-  cmd_val[4]=1.0;
-  cmd_val[5]=1.0;
-  cmd_val[6]=1.0;
-  cmd_val[7]=1.0;
+  
 }
 
 ros::NodeHandle nh;
