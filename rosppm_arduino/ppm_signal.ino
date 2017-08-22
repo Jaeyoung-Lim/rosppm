@@ -3,7 +3,7 @@ void set_ppm(){
     //minimum 650 max 1700
     
     for(int i=0; i<number_of_outputs; i++){
-    pulses[0] = (int) cmd_val[0]*512.0+1175.0; //Encode stick inputs into pulse values
+    pulses[i] = (int) cmd_val[i]*512.0+1175.0; //Encode stick inputs into pulse values
     }
     
 }
