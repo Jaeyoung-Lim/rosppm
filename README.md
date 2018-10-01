@@ -60,7 +60,7 @@ cd ~/catkin_ws
 catkin init
 
 cd ~/catkin_ws/src
-git clone https://github.com/gokoreas/rosppm.git
+git clone https://github.com/Jaeyoung-Lim/rosppm.git
 cd ~/catkin_ws
 catkin_make --pkg usb2ppm_ros
 ```
