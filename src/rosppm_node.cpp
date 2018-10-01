@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "sensor_msgs/Joy.h"
 #include "std_msgs/Float32.h"
-#include "rosppm/ppm_io.h"
+#include "rosppm/rosppm.h"
 #define loopRate 100
 
 float joy_set_axes[9];

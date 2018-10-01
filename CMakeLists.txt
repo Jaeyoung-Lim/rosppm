@@ -29,7 +29,7 @@ generate_messages(
 ###################################
 
 catkin_package(
-#  INCLUDE_DIRS include
+  INCLUDE_DIRS include
 #  LIBRARIES rosppm
 #  CATKIN_DEPENDS roscpp rospy std_msgs
 #  DEPENDS system_lib
@@ -45,6 +45,6 @@ include_directories(
 )
 
 ## Declare a C++ library
-add_executable(rosppm_node src/rosppm_node.cpp)
+add_executable(rosppm_node src/rosppm_node.cpp include/rosppm/rosppm.h src/rosppm.cpp)
 target_link_libraries(rosppm_node ${catkin_LIBRARIES})
 add_dependencies(rosppm_node rosppm_generate_messages_cpp)
