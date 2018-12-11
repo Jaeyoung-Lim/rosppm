@@ -55,12 +55,8 @@ Tutorial for rosserial can be found in the [rosserial wiki](http://wiki.ros.org/
 Install rosppm package by placing the code in the source folder in catkin_ws
 
 ```
-mkdir -p ~/catkin_ws/src
-cd ~/catkin_ws
-catkin init
-
-cd ~/catkin_ws/src
+cd <catkin_workspace>/src
 git clone https://github.com/Jaeyoung-Lim/rosppm.git
-cd ~/catkin_ws
-catkin_make --pkg usb2ppm_ros
+cd <catkin_workspace>
+catkin build  rosppm
 ```
